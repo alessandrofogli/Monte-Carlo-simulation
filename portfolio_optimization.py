@@ -47,6 +47,27 @@ def plot_efficient_frontier(returns, num_portfolios, portfolios, optimal_portfol
 
     return fig
 
+def calculate_underwater_curve(cumulative_returns):
+    high_water_mark = np.zeros_like(cumulative_returns)
+    drawdown = np.zeros_like(cumulative_returns)
+
+    for t in range(1, len(cumulative_returns)):
+        high_water_mark[t] = np.maximum(high_water_mark[t-1], cumulative_returns[t])
+        drawdown[t] = (1 + cumulative_returns[t]) / (1 + high_water_mark[t]) - 1
+    
+    return drawdown
+
+def plot_underwater_curve(drawdown, dates):
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(dates, drawdown, color='red', alpha=0.5)
+    ax.fill_between(dates, drawdown, 0, color='red', alpha=0.5)
+    ax.set_title('Underwater Curve')
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Drawdown')
+    ax.grid(True)
+    fig.autofmt_xdate()  # Rotate date labels for better readability
+    return fig
+
 def main():
     st.title('Efficient Frontier Portfolio Analysis')
 
@@ -89,8 +110,21 @@ def main():
         st.write(optimal_portfolio[['tickers', 'full_name', 'weights']].round(4))
         st.write('---')
 
-        fig = plot_efficient_frontier(returns, num_portfolios, portfolios, optimal_portfolio)
-        st.pyplot(fig)
+        fig_efficient_frontier = plot_efficient_frontier(returns, num_portfolios, portfolios, optimal_portfolio)
+        st.pyplot(fig_efficient_frontier)
+
+        # Calculate cumulative returns of the optimal portfolio
+        optimal_cumulative_returns = (returns * weights).sum(axis=1).cumsum()
+
+        # Get dates
+        dates = data.index[1:]
+
+        # Calculate underwater curve
+        drawdown = calculate_underwater_curve(optimal_cumulative_returns)
+
+        # Plot the underwater curve
+        fig_underwater_curve = plot_underwater_curve(drawdown, dates)
+        st.pyplot(fig_underwater_curve)
 
 if __name__ == "__main__":
     main()
