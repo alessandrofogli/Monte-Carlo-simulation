@@ -57,15 +57,14 @@ def calculate_underwater_curve(cumulative_returns):
     
     return drawdown
 
-def plot_underwater_curve(drawdown, dates):
+def plot_underwater_curve(drawdown):
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.plot(dates, drawdown, color='red', alpha=0.5)
-    ax.fill_between(dates, drawdown, 0, color='red', alpha=0.5)
+    ax.plot(drawdown, color='red', alpha=0.5)
+    ax.fill_between(range(len(drawdown)), drawdown, 0, color='red', alpha=0.5)
     ax.set_title('Underwater Curve')
-    ax.set_xlabel('Date')
+    ax.set_xlabel('Time')
     ax.set_ylabel('Drawdown')
     ax.grid(True)
-    fig.autofmt_xdate()  # Rotate date labels for better readability
     return fig
 
 def main():
@@ -116,15 +115,21 @@ def main():
         # Calculate cumulative returns of the optimal portfolio
         optimal_cumulative_returns = (returns * weights).sum(axis=1).cumsum()
 
-        # Get dates
-        dates = data.index[1:]
-
         # Calculate underwater curve
         drawdown = calculate_underwater_curve(optimal_cumulative_returns)
 
         # Plot the underwater curve
-        fig_underwater_curve = plot_underwater_curve(drawdown, dates)
+        fig_underwater_curve = plot_underwater_curve(drawdown)
         st.pyplot(fig_underwater_curve)
+
+        # Plot cumulative return of optimal portfolio
+        fig_cumulative_returns = plt.figure(figsize=(10, 6))
+        plt.plot(optimal_cumulative_returns.index, optimal_cumulative_returns.values, color='blue')
+        plt.title('Cumulative Returns of Optimal Portfolio')
+        plt.xlabel('Date')
+        plt.ylabel('Cumulative Return')
+        plt.grid(True)
+        st.pyplot(fig_cumulative_returns)
 
 if __name__ == "__main__":
     main()
