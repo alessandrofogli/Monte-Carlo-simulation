@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit as st
+import matplotlib.dates as mdates
 
 # Set a fixed seed for reproducibility
 np.random.seed(42)
@@ -57,15 +58,18 @@ def calculate_underwater_curve(cumulative_returns):
     
     return drawdown
 
-def plot_underwater_curve(drawdown):
+def plot_underwater_curve(drawdown, dates):
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.plot(drawdown, color='red', alpha=0.5)
-    ax.fill_between(range(len(drawdown)), drawdown, 0, color='red', alpha=0.5)
+    ax.plot(dates, drawdown, color='red', alpha=0.5)
+    ax.fill_between(dates, drawdown, 0, color='red', alpha=0.5)
     ax.set_title('Underwater Curve')
-    ax.set_xlabel('Time')
+    ax.set_xlabel('Date')
     ax.set_ylabel('Drawdown')
     ax.grid(True)
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))  # Format the date on x-axis
+    fig.autofmt_xdate()  # Auto-format the x-axis date labels for better readability
     return fig
+
 
 def main():
     st.title('Efficient Frontier Portfolio Analysis')
@@ -79,6 +83,8 @@ def main():
     if st.button('Calculate'):
         data = download_data(tickers, start_date, end_date)
         returns = data.pct_change().dropna()
+        dates = returns.index
+
 
         num_portfolios = 10000
         portfolios = generate_random_portfolios(returns, num_portfolios)
@@ -115,13 +121,12 @@ def main():
         # Calculate cumulative returns of the optimal portfolio
         optimal_cumulative_returns = (returns * weights).sum(axis=1).cumsum()
 
-        # Calculate underwater curve
         drawdown = calculate_underwater_curve(optimal_cumulative_returns)
 
         # Plot the underwater curve
-        fig_underwater_curve = plot_underwater_curve(drawdown)
+        fig_underwater_curve = plot_underwater_curve(drawdown, optimal_cumulative_returns.index)
         st.pyplot(fig_underwater_curve)
-
+        
         # Plot cumulative return of optimal portfolio
         fig_cumulative_returns = plt.figure(figsize=(10, 6))
         plt.plot(optimal_cumulative_returns.index, optimal_cumulative_returns.values, color='blue')
