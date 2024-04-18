@@ -30,4 +30,14 @@ This project aims to provide a tool for optimizing investment portfolios using m
 6. Click the "Calculate" button to view the optimized allocation.
 7. Explore the results including optimized weights and efficient frontier plot.
 
+You can test the app here:
+
+<p align="left">
+  <a href="optimizeyourportfolio.streamlit.app">
+    <img src="streamlitlogo.png" alt="Streamlit Logo" width="50" height="30"/>
+    <img src="https://img.shields.io/badge/Open%20in-Streamlit-ff4b4b?style=for-the-badge&logo=streamlit&logoColor=white" alt="Open in Streamlit"/>
+  </a>
+</p>
+
+
 
