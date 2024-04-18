@@ -33,10 +33,11 @@ This project aims to provide a tool for optimizing investment portfolios using m
 You can test the app here:
 
 <p align="left">
-  <a href="optimizeyourportfolio.streamlit.app">
+  <a href="https://optimizeyourportfolio.streamlit.app">
     <img src="https://img.shields.io/badge/Open%20in-Streamlit-ff4b4b?style=for-the-badge&logo=streamlit&logoColor=white" alt="Open in Streamlit"/>
   </a>
 </p>
+
 
 
 
